@@ -1,0 +1,13 @@
+Package: FCA.data.table
+Type: Package
+Title: FCA methods based on data.table
+Version: 1.0
+Date: 2016-08-18
+Author: Tobias Schlemmer
+Depends:
+    R (>= 2.14.1),
+    data.table (>= 1.9.7)
+Maintainer: Tobias Schlemmer <keinstein@users.sourceforg.net>
+Description: More about what it does (maybe more than one line)
+License: Apache License 2.0
+RoxygenNote: 5.0.1
