@@ -474,9 +474,13 @@ format.trimodus.data.table <- function(x,...) {
     mergenames <- names[2:3]
     names(mergenames) <- mergenames
     intersect <- function(x,y) {
-        x[y,nomatch=0,on=eval(names[2:3])]
+        x[y,nomatch=0,on=mergenames]
     }
-    tmp <- lapply(given,function(x) as.data.table(cxt[eval(as.name(names[1]))==x,mergenames,with=FALSE]))
+    tmp <- lapply(unlist(given),function(x) {
+        as.data.table(cxt[eval(as.name(names[1]))==x,mergenames,with=FALSE])
+    }
+    )
+        
     Reduce(intersect,tmp,tmp[[1]])
 }
 
@@ -495,13 +499,23 @@ format.trimodus.data.table <- function(x,...) {
                                         #    tmp <- lapply(given,function(x) as.data.table(cxt[eval(as.name(names[1]))==x,mergenames,with=FALSE]))
                                         #    Reduce(intersect2,tmp,tmp[[1]])
     inlist <- function(x) list(list(x))
-    as.data.table(cxt[given,
-                       .(set=inlist(.SD)),
-                       keyby=.EACHI,
-                       on=names[1],
-                       .SDcols=mergenames]
-     [,Reduce(intersect2,set,set[[1]][[1]])]
-    )
+    if (FALSE) {
+        as.data.table(cxt[given,
+                          .(set=inlist(.SD)),
+                          keyby=.EACHI,
+                          on=names[1],
+                          .SDcols=mergenames]
+                      [,Reduce(intersect2,set,set[[1]][[1]])]
+                      )
+    } else {
+        as.data.table(cxt[given,
+                          .(set=inlist(.SD)),
+                          keyby=.EACHI,
+                          on=names[1]]
+                      [,Reduce(intersect2,set,set[[1]][[1]])]
+                      [,mergenames,with=FALSE]
+                      )
+    }
 }
 
 #' Get the condition/object pairs from a formal triadic context that are
