@@ -11,7 +11,7 @@ shared by a set of given attributes.}
 \item{x}{a triadic modus.}
 }
 \value{
-a an attribute representing the object/attribute pairs that
+a an object representing the object/attribute pairs that
 are shared by all attributes of the triadic modus x
 }
 \description{

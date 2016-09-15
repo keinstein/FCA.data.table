@@ -11,7 +11,7 @@ shared by a set of given attributes.}
 \item{x}{a triadic extent.}
 }
 \value{
-a an attribute representing the condition/attribute pairs that
+a an object representing the condition/attribute pairs that
 are shared by all attributes of the triadic extent x
 }
 \description{
