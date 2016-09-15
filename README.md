@@ -21,6 +21,7 @@ install.packages(c("devtools","roxygen2"))
 Installation from the local repository
 --------------------------------------
 ```
+require("devtools")
 devtools::document(".")
 devtools::install(".")
 ```
