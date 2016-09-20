@@ -2,8 +2,13 @@
 % Please edit documentation in R/tricontext.R
 \name{concept}
 \alias{concept}
+\alias{concept.triconcept.data.table}
 \title{Create an extent from some object.}
 \usage{
+concept(x, ...)
+
+\method{concept}{triconcept.data.table}(concept)
+
 concept(x, ...)
 }
 \arguments{
@@ -16,5 +21,11 @@ a formal triadic extent
 }
 \description{
 Create an extent from some object.
+
+Create a formal concept
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{triconcept.data.table}: return the concept as no conversion is needed
+}}
 

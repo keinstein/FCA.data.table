@@ -2,19 +2,42 @@
 % Please edit documentation in R/tricontext.R
 \name{extintent}
 \alias{extintent}
+\alias{extintent.triextintent.data.table}
+\alias{extintent.trimodus.data.table}
 \title{Get a set of object/attribute pairs depending on a givon R object}
 \usage{
 extintent(x, ...)
+
+\method{extintent}{triextintent.data.table}(extintent)
+
+\method{extintent}{trimodus.data.table}(x)
 }
 \arguments{
 \item{x}{description of the object
 A see extintent.trimodus.data.table for information about creating an
 a partial triadic derivation of an modus.}
+
+\item{x}{a triadic modus.}
 }
 \value{
 a an object representing object/attribute pairs
+
+a an object representing the object/attribute pairs that
+are shared by all attributes of the triadic modus x
 }
 \description{
 Get a set of object/attribute pairs depending on a givon R object
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{triextintent.data.table}: return the extintent as no conversion is needed
+
+\item \code{trimodus.data.table}: Get the object/attribute pairs from a formal triadic context that are
+shared by a set of given attributes.
+
+The result is a triadic equivalent to the binary derivation
+operation in the (binary) formal context of attributes and the
+product of the object and attribute sets that is derived from the
+triadic context.
+}}
 

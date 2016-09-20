@@ -2,19 +2,42 @@
 % Please edit documentation in R/tricontext.R
 \name{modintent}
 \alias{modintent}
+\alias{modintent.triextent.data.table}
+\alias{modintent.trimodintent.data.table}
 \title{Get a set of condition/attribute pairs depending on a givon R object}
 \usage{
 modintent(x, ...)
+
+\method{modintent}{trimodintent.data.table}(modintent)
+
+\method{modintent}{triextent.data.table}(x)
 }
 \arguments{
 \item{x}{description of the object
 A see modintent.triintent.data.table for information about creating an
 a partial triadic derivation of an extent.}
+
+\item{x}{a triadic extent.}
 }
 \value{
 a an object representing condition/attribute pairs
+
+a an object representing the condition/attribute pairs that
+are shared by all attributes of the triadic extent x
 }
 \description{
 Get a set of condition/attribute pairs depending on a givon R object
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{trimodintent.data.table}: return the modintent as no conversion is needed
+
+\item \code{triextent.data.table}: Get the condition/attribute pairs from a formal triadic context that are
+shared by a set of given attributes.
+
+The result is a triadic equivalent to the binary derivation
+operation in the (binary) formal context of attributes and the
+product of the condition and attribute sets that is derived from the
+triadic context.
+}}
 

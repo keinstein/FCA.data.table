@@ -2,19 +2,42 @@
 % Please edit documentation in R/tricontext.R
 \name{modextent}
 \alias{modextent}
+\alias{modextent.triintent.data.table}
+\alias{modextent.trimodextent.data.table}
 \title{Get a set of condition/object pairs depending on a givon R object}
 \usage{
 modextent(x, ...)
+
+\method{modextent}{trimodextent.data.table}(modextent)
+
+\method{modextent}{triintent.data.table}(x)
 }
 \arguments{
 \item{x}{description of the object
 A see modextent.triintent.data.table for information about creating an
 a partial triadic derivation of an intent.}
+
+\item{x}{a triadic intent.}
 }
 \value{
 a an object representing condition/object pairs
+
+a an object representing the condition/object pairs that
+are shared by all attributes of the triadic intent x
 }
 \description{
 Get a set of condition/object pairs depending on a givon R object
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{trimodextent.data.table}: return the modextent as no conversion is needed
+
+\item \code{triintent.data.table}: Get the condition/object pairs from a formal triadic context that are
+shared by a set of given attributes.
+
+The result is a triadic equivalent to the binary derivation
+operation in the (binary) formal context of attributes and the
+product of the condition and object sets that is derived from the
+triadic context.
+}}
 

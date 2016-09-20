@@ -23,6 +23,11 @@ format.tricontext.data.table <- function (x,...) {
 #    format.data.frame(x,...)
 }
 
+#' tests whether an object is a formal tricontext
+#' @param x object to be tested
+#' @return TRUE, if the object is a formal tricontext
+#' FALSE, otherwise
+#' @export
 is.tricontext.data.table <- function(x) {
     inherits(x, "tricontext.data.table")
 }
@@ -110,7 +115,7 @@ collapse_conditions <- function(x) {
 #'          considered as objects, attributes and conditions,
 #'          respectively.
 #'
-#'          See @ref data.table for further reference.
+#'          See \link{data.table} for further reference.
 #' @param objects either NULL or a list of objects. This list
 #'                must be a superset of the objects that are
 #'                actually used in the objects column.
@@ -138,15 +143,52 @@ collapse_conditions <- function(x) {
 #'                      This parameter will be used to avoid scaling of
 #'                      many-valueed triadic contexts
 #' @return a triadic formal context
+#' @keywords data
+#' @aliases as.tricontext.data.table
+#' @examples
+#' library("data.table")
+#' library("FCA.data.table")
+#'
+#' hostelmatrix <- as.logical(c(
+#' #   hostelworld  hestels      hostelbookers
+#' #   c y l s f c  c y l s f c  c y l s f c
+#'     0,0,1,0,0,0, 0,0,1,1,0,0, 0,0,1,1,0,0, # Nuevo Suizo
+#'     0,1,1,1,0,1, 0,1,1,1,0,1, 1,1,1,1,0,1, # Samay
+#'     1,1,1,1,0,1, 1,1,1,1,1,1, 0,1,1,1,1,1, # Oasis Backpacker
+#'     1,1,0,1,0,1, 1,1,1,1,1,1, 1,1,1,1,1,1, # One
+#'     1,1,0,1,0,1, 1,1,1,1,1,1, 1,1,1,1,1,1, # Ole Backpacker
+#'     0,0,1,1,0,1, 1,1,1,1,1,1, 1,1,1,1,0,1  # Garden Backpacker
+#' ))
+#'
+#' hm1 <- expand.grid(object = c("Nuevo Suizo","Samay","Oasis Backpacker",
+#'                        "One","Ole Backpacker","Garden Backpacker"),
+#'                    condition = c("hostelworld","hostels","hostelbookers"),
+#'                    attribute = c("character","safety","location",
+#'                        "staff","fun","cleanliness"),
+#'                    stringsAsFactors=FALSE)
+#'
+#' hostels <- tricontext.data.table(hm1[hostelmatrix,],
+#'                                  objects = unique(hm1[,"object"]),
+#'                                  attributes = unique(hm1[,"attribute"]),
+#'                                  conditions = unique(hm1[,"condition"])
+#'                                  )
+#'
+#' he <- extent(hostels,c("Nuevo Suizo",
+#'                        "Samay",
+#'                        "Oasis Backpacker",
+#'                        "Garden Backpacker"))
+#' hm <- modus(hostels,c("hostelbookers"))
+#'
+#' @import data.table
 #' @export
 tricontext.data.table <- function(x=NULL,
                                   ...,
                                   objects = NULL,
                                   attributes = NULL,
                                   conditions = NULL,
-                                  objectname = NULL,
-                                  attributename = NULL,
-                                  conditionname = NULL,
+                                  objectname = "object",
+                                  attributename = "attribute",
+                                  conditionname = "condition",
                                   collapse_obj  = collapse_objects,
                                   collapse_attr = collapse_attributes,
                                   collapse_cond  = collapse_conditions) {
@@ -209,7 +251,9 @@ get.objects <- function(x) {
     return (x[,attr(x,"objectcol")])
 }
 
+#' export
 is.triextent.data.table <- function(x) inherits (x,"triextent.data.table")
+#' export
 is.triintent.data.table <- function(x) inherits (x,"triintent.data.table")
 
 #' Create an extent from some object.
@@ -217,6 +261,9 @@ is.triintent.data.table <- function(x) inherits (x,"triintent.data.table")
 #' A see extent.tricontext.data.table for information about creating an
 #' extent from a list of objects.
 #' @return a formal triadic extent
+#' @seealso extent.tricontext.data.table
+#' @family FCA derivation
+#'
 #' @export
 extent <- function (x,...) {
     UseMethod("extent")
@@ -227,6 +274,8 @@ extent <- function (x,...) {
 #' A see intent.tricontext.data.table for information about creating an
 #' intent from a list of objects.
 #' @return a formal triadic intent
+#' @seealso extent.tricontext.data.table
+#' @family FCA derivation
 #' @export
 intent <- function (x,...) {
     UseMethod("intent")
@@ -282,21 +331,36 @@ concept <- function (x,...) {
     UseMethod("concept")
 }
 
+#' @describeIn extent
+#' return the extent as no conversion is needed
 #' @export
-extent.triextent.data.table <- function(x) x
+extent.triextent.data.table <- function(extent) extent
+#' @describeIn intent
+#' return the intent as no conversion is needed
 #' @export
-intent.triintent.data.table <- function(x) x
+intent.triintent.data.table <- function(intent) intent
+#' @describeIn modus
+#' return the modus as no conversion is needed
 #' @export
-modus.trimodus.data.table <- function(x) x
+modus.trimodus.data.table <- function(modus) modus
+#' @describeIn modextent
+#' return the modextent as no conversion is needed
 #' @export
-modextent.trimodextent.data.table <- function(x) x
+modextent.trimodextent.data.table <- function(modextent) modextent
+#' @describeIn modintent
+#' return the modintent as no conversion is needed
 #' @export
-modintent.trimodintent.data.table <- function(x) x
+modintent.trimodintent.data.table <- function(modintent) modintent
+#' @describeIn extintent
+#' return the extintent as no conversion is needed
 #' @export
-extintent.triextintent.data.table <- function(x) x
+extintent.triextintent.data.table <- function(extintent) extintent
+#' @describeIn concept
+#' return the concept as no conversion is needed
 #' @export
-concept.triconcept.data.table <- function (x) x
+concept.triconcept.data.table <- function (concept) concept
 
+#' @describeIn extent
 #' Convert a list of object names into a possible formal extent of a
 #' triadic context
 #'
@@ -326,18 +390,19 @@ extent.tricontext.data.table <- function (context, objects) {
 
 #' @export
 print.triextent.data.table <- function(x,...) {
-    cat("Triadic extent: ")
+    cat("Triadic extent: \n")
     print(attr(x,"objects"),...)
     invisible(x)
 }
 
 #' @export
 format.triextent.data.table <- function(x,...) {
-    paste("Triadic extent: ",
+    paste("Triadic extent: \n",
           format(attr(x,"objects"),...),
           sep="")
 }
 
+#' @describeIn intent
 #' Convert a list of attribute names into a possible formal intent of a
 #' triadic context
 #'
@@ -367,19 +432,19 @@ intent.tricontext.data.table <- function (context, attributes) {
 
 #' @export
 print.triintent.data.table <- function(x,...) {
-    cat("Triadic intent: ")
+    cat("Triadic intent: \n")
     print(attr(x,"attributes"),...)
     invisible(x)
 }
 
 #' @export
 format.triintent.data.table <- function(x,...) {
-    paste("Triadic intent: ",
+    paste("Triadic intent: \n",
           format(attr(x,"attributes"),...),
           sep="")
 }
 
-
+#' @describeIn modus
 #' Convert a list of condition names into a possible formal modus of a
 #' triadic context
 #'
@@ -409,14 +474,14 @@ modus.tricontext.data.table <- function (context, conditions) {
 
 #' @export
 print.trimodus.data.table <- function(x,...) {
-    cat("Triadic modus: ")
+    cat("Triadic modus: \n")
     print(attr(x,"conditions"),...)
     invisible(x)
 }
 
 #' @export
 format.trimodus.data.table <- function(x,...) {
-    paste("Triadic modus: ",
+    paste("Triadic modus: \n",
           format(attr(x,"conditions"),...),
           sep="")
 }
@@ -595,6 +660,7 @@ format.trimodus.data.table <- function(x,...) {
     }
 }
 
+#' @describeIn modextent
 #' Get the condition/object pairs from a formal triadic context that are
 #' shared by a set of given attributes.
 #'
@@ -625,7 +691,7 @@ modextent.triintent.data.table <- function(x) {
               class = "trimodextent.data.table")
 }
 
-
+#' @describeIn modintent
 #' Get the condition/attribute pairs from a formal triadic context that are
 #' shared by a set of given attributes.
 #'
@@ -654,6 +720,7 @@ modintent.triextent.data.table <- function(x) {
               class = "trimodintent.data.table")
 }
 
+#' @describeIn extintent
 #' Get the object/attribute pairs from a formal triadic context that are
 #' shared by a set of given attributes.
 #'
@@ -683,7 +750,7 @@ extintent.trimodus.data.table <- function(x) {
               class = "triextintent.data.table")
 }
 
-
+#' @describeIn intent
 #' Get the attributes from a formal triadic context that are
 #' shared by a set of given condition/object pairs.
 #'
@@ -838,6 +905,7 @@ modus.triintent.data.table <- function(intent,extent) intent.triextent.data.tabl
 
 
 
+#' @describeIn extent
 #' Get the objects from a formal triadic context that are
 #' shared by a set of given condition/attribute pairs.
 #'
@@ -864,6 +932,7 @@ extent.trimodintent.data.table <- function(x) {
               class = "triextent.data.table")
 }
 
+#' @describeIn modus
 #' Get the conditions from a formal triadic context that are
 #' shared by a set of given object/attribute pairs.
 #'
@@ -893,7 +962,7 @@ modus.triextintent.data.table <- function(x) {
 
 #' @export
 print.trimodextent.data.table <- function(x,...) {
-    cat("Triadic modus×extent: ")
+    cat("Triadic modus×extent: \n")
     print(attr(x,"conditions"),...)
     print(attr(x,"objects"),...)
     invisible(x)
@@ -901,7 +970,7 @@ print.trimodextent.data.table <- function(x,...) {
 
 #' @export
 format.trimodextent.data.table <- function(x,...) {
-    paste("Triadic modus×extent: ",
+    paste("Triadic modus×extent: \n",
           format(attr(x,"conditions"),...),
           format(attr(x,"objects"),...),
           sep="")
@@ -909,7 +978,7 @@ format.trimodextent.data.table <- function(x,...) {
 
 #' @export
 print.trimodintent.data.table <- function(x,...) {
-    cat("Triadic modus×intent: ")
+    cat("Triadic modus×intent: \n")
     print(attr(x,"conditions"),...)
     print(attr(x,"attributes"),...)
     invisible(x)
@@ -917,7 +986,7 @@ print.trimodintent.data.table <- function(x,...) {
 
 #' @export
 format.trimodintent.data.table <- function(x,...) {
-    paste("Triadic modus×intent: ",
+    paste("Triadic modus×intent: \n",
           format(attr(x,"conditions"),...),
           format(attr(x,"attributes"),...),
           sep="")
@@ -925,7 +994,7 @@ format.trimodintent.data.table <- function(x,...) {
 
 #' @export
 print.triextintent.data.table <- function(x,...) {
-    cat("Triadic extent×intent: ")
+    cat("Triadic extent×intent: \n")
     print(attr(x,"objects"),...)
     print(attr(x,"attributes"),...)
     invisible(x)
@@ -933,12 +1002,13 @@ print.triextintent.data.table <- function(x,...) {
 
 #' @export
 format.triextintent.data.table <- function(x,...) {
-    paste("Triadic extent×intent: ",
+    paste("Triadic extent×intent: \n",
           format(attr(x,"objects"),...),
           format(attr(x,"attributes"),...),
           sep="")
 }
 
+#' Create a formal concept
 concept <- function (x,...) {
     UseMethod("concept")
 }
@@ -983,3 +1053,4 @@ print.subtricontext.data.table <- function(x,...) {
     print.tricontext.data.table(x,...)
     invisible(x)
 }
+
