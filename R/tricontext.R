@@ -535,6 +535,66 @@ format.trimodus.data.table <- function(x,...) {
     }
 }
 
+#'@export
+"_derive_1D_1D_1D" <- function(cxt, one, two, names) {
+    if (!is.data.table(one)) {
+        one <- as.data.table(one)
+        setnames(one,c(names[1]))
+    }
+    if (!is.data.table(two)) {
+        two <- as.data.table(two)
+        setnames(two,c(names[2]))
+    }
+    mergenames <- names[3]
+    names(mergenames) <- mergenames
+    intersect2 <- function(x,y) {
+        if (!is.list(x) || !is.list(y)) return(NA)
+        if (!length(x) || !length(y)) return (NA)
+        x[y,nomatch=0,on=mergenames]
+    }
+    myreduce <- function(x) {
+        len <- length(x)
+        if(len == 0L) return(NA)
+        if(len == 1L) return(x[[1]])
+        f <- match.fun(intersect2)
+        res <- x[[1]]
+        for (i in seq_along(x)) {
+            res <- f(res,x[[i]])
+            if (!is.list(res)) break
+            if (!nrow(res)) break
+        }
+        return(res)
+    }
+                                        #    print(list(list(list(eval(lapply(mergenames,as.name))))))
+                                        #    tmp <- lapply(given,function(x) as.data.table(cxt[eval(as.name(names[1]))==x,mergenames,with=FALSE]))
+                                        #    Reduce(intersect2,tmp,tmp[[1]])
+    inlist <- function(x) list(x)
+    if (FALSE) {
+        as.data.table(cxt[given,
+                          .(set=inlist(.SD)),
+                          keyby=.EACHI,
+                          on=names[1],
+                          .SDcols=mergenames]
+                      [,Reduce(intersect2,set,set[[1]][[1]])]
+                      )
+    } else {
+        (tmp <- cxt[one,
+                    .SD,
+                    keyby=.EACHI,
+                    on=names[1]][two,
+             .(setlist=inlist(.SD)),
+             keyby=eval(names[1:2]),
+             on=names[2],
+             .SDcols=names[3]]
+            [,myreduce(setlist)])
+#        (tmp <- tmp
+#            [,Reduce(intersect2,setlist[[1]],setlist[[1]][[1]])])
+        if (!is.list(tmp))
+            return(setnames(data.table(x=list()),c(names[3])))
+        as.data.table(tmp,names=c(names[3]))
+    }
+}
+
 #' Get the condition/object pairs from a formal triadic context that are
 #' shared by a set of given attributes.
 #'
@@ -649,6 +709,134 @@ intent.trimodextent.data.table <- function(x) {
               attributes = reduced,
               class = "triintent.data.table")
 }
+
+#' @describeIn intent
+#' Get the attributes from a formal triadic context that are shared by
+#' all elemets of the set theoretical product of a modus with an
+#' extent.
+#'
+#' The result is the set of all attributes that are connected to all
+#' given objects under all given conditions via the incidence relation.
+#' @param modus a triadic modus
+#' @param extent a triadic extent
+#' @return a triadic intent.
+#' @export
+intent.trimodus.data.table <- function(modus,extent) {
+    cxt <- attr(modus,"context")
+    if (!is.triextent.data.table(extent))
+        stop ("The secound argument must be a triadic extent")
+    if (!identical(cxt,attr(extent,"context")))
+        stop ("Trying to infer a common intent from a modus and an extent of different contexts")
+    reduced <- `_derive_1D_1D_1D`(cxt,
+                                  attr(modus,"conditions"),
+                                  attr(extent,"objects"),
+                                  c(attr(cxt,"conditionname"),
+                                    attr(cxt,"objectname"),
+                                    attr(cxt,"attributename")))
+    structure(NA,
+              context = cxt,
+              attributes = reduced,
+              class = "triintent.data.table")
+}
+
+#' @describeIn intent
+#' Get the attributes from a formal triadic context that are shared by
+#' all elemets of the set theoretical product of a modus with an
+#' extent.
+#'
+#' The result is the set of all attributes that are connected to all
+#' given objects under all given conditions via the incidence relation.
+#' @param extent a triadic extent
+#' @param modus a triadic modus
+#' @return a triadic intent.
+#' @export
+intent.triextent.data.table <- function(extent,modus) intent.trimodus.data.table(modus,extent)
+
+#' @describeIn extent
+#' Get the attributes from a formal triadic context that are shared by
+#' all elemets of the set theoretical product of a modus with an
+#' intent.
+#'
+#' The result is the set of all attributes that are connected to all
+#' given objects under all given conditions via the incidence relation.
+#' @param modus a triadic modus
+#' @param intent a triadic intent
+#' @return a triadic intent.
+#' @export
+extent.trimodus.data.table <- function(modus,intent) {
+    cxt <- attr(modus,"context")
+    if (!is.triintent.data.table(intent))
+        stop ("The secound argument must be a triadic intent")
+    if (!identical(cxt,attr(intent,"context")))
+        stop ("Trying to infer a common intent from a modus and an intent of different contexts")
+    reduced <- `_derive_1D_1D_1D`(cxt,
+                                  attr(modus,"conditions"),
+                                  attr(intent,"attributes"),
+                                  c(attr(cxt,"conditionname"),
+                                    attr(cxt,"attributename"),
+                                    attr(cxt,"objectname")))
+    structure(NA,
+              context = cxt,
+              attributes = reduced,
+              class = "triextent.data.table")
+}
+
+#' @describeIn extent
+#' Get the attributes from a formal triadic context that are shared by
+#' all elemets of the set theoretical product of a modus with an
+#' intent.
+#'
+#' The result is the set of all attributes that are connected to all
+#' given objects under all given conditions via the incidence relation.
+#' @param intent a triadic intent
+#' @param modus a triadic modus
+#' @return a triadic intent.
+#' @export
+extent.triintent.data.table <- function(intent,modus) intent.trimodus.data.table(modus,intent)
+
+#' @describeIn modus
+#' Get the attributes from a formal triadic context that are shared by
+#' all elemets of the set theoretical product of a extent with an
+#' intent.
+#'
+#' The result is the set of all attributes that are connected to all
+#' given objects under all given conditions via the incidence relation.
+#' @param extent a triadic extent
+#' @param intent a triadic intent
+#' @return a triadic intent.
+#' @export
+modus.triextent.data.table <- function(extent,intent) {
+    cxt <- attr(extent,"context")
+    if (!is.triintent.data.table(intent))
+        stop ("The secound argument must be a triadic intent")
+    if (!identical(cxt,attr(intent,"context")))
+        stop ("Trying to infer a common intent from a extent and an intent of different contexts")
+    reduced <- `_derive_1D_1D_1D`(cxt,
+                                  attr(extent,"objects"),
+                                  attr(intent,"attributes"),
+                                  c(attr(cxt,"objectname"),
+                                    attr(cxt,"attributename"),
+                                    attr(cxt,"conditionname")))
+    structure(NA,
+              context = cxt,
+              attributes = reduced,
+              class = "trimodus.data.table")
+}
+
+#' @describeIn modus
+#' Get the attributes from a formal triadic context that are shared by
+#' all elemets of the set theoretical product of a extent with an
+#' intent.
+#'
+#' The result is the set of all attributes that are connected to all
+#' given objects under all given conditions via the incidence relation.
+#' @param intent a triadic intent
+#' @param extent a triadic extent
+#' @return a triadic intent.
+#' @export
+modus.triintent.data.table <- function(intent,extent) intent.triextent.data.table(extent,intent)
+
+
 
 #' Get the objects from a formal triadic context that are
 #' shared by a set of given condition/attribute pairs.
