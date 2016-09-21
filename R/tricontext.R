@@ -145,40 +145,7 @@ collapse_conditions <- function(x) {
 #' @return a triadic formal context
 #' @keywords data
 #' @aliases as.tricontext.data.table
-#' @examples
-#' library("data.table")
-#' library("FCA.data.table")
-#'
-#' hostelmatrix <- as.logical(c(
-#' #   hostelworld  hestels      hostelbookers
-#' #   c y l s f c  c y l s f c  c y l s f c
-#'     0,0,1,0,0,0, 0,0,1,1,0,0, 0,0,1,1,0,0, # Nuevo Suizo
-#'     0,1,1,1,0,1, 0,1,1,1,0,1, 1,1,1,1,0,1, # Samay
-#'     1,1,1,1,0,1, 1,1,1,1,1,1, 0,1,1,1,1,1, # Oasis Backpacker
-#'     1,1,0,1,0,1, 1,1,1,1,1,1, 1,1,1,1,1,1, # One
-#'     1,1,0,1,0,1, 1,1,1,1,1,1, 1,1,1,1,1,1, # Ole Backpacker
-#'     0,0,1,1,0,1, 1,1,1,1,1,1, 1,1,1,1,0,1  # Garden Backpacker
-#' ))
-#'
-#' hm1 <- expand.grid(object = c("Nuevo Suizo","Samay","Oasis Backpacker",
-#'                        "One","Ole Backpacker","Garden Backpacker"),
-#'                    condition = c("hostelworld","hostels","hostelbookers"),
-#'                    attribute = c("character","safety","location",
-#'                        "staff","fun","cleanliness"),
-#'                    stringsAsFactors=FALSE)
-#'
-#' hostels <- tricontext.data.table(hm1[hostelmatrix,],
-#'                                  objects = unique(hm1[,"object"]),
-#'                                  attributes = unique(hm1[,"attribute"]),
-#'                                  conditions = unique(hm1[,"condition"])
-#'                                  )
-#'
-#' he <- extent(hostels,c("Nuevo Suizo",
-#'                        "Samay",
-#'                        "Oasis Backpacker",
-#'                        "Garden Backpacker"))
-#' hm <- modus(hostels,c("hostelbookers"))
-#'
+#' @example inst/examples/generic_tricontext.R
 #' @import data.table
 #' @export
 tricontext.data.table <- function(x=NULL,

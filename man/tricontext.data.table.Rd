@@ -61,9 +61,7 @@ This function adds the necessary information in order to
 convert a data table into a triadic context
 }
 \examples{
-library("data.table")
 library("FCA.data.table")
-
 hostelmatrix <- as.logical(c(
 #   hostelworld  hestels      hostelbookers
 #   c y l s f c  c y l s f c  c y l s f c
@@ -75,12 +73,13 @@ hostelmatrix <- as.logical(c(
     0,0,1,1,0,1, 1,1,1,1,1,1, 1,1,1,1,0,1  # Garden Backpacker
 ))
 
-hm1 <- expand.grid(object = c("Nuevo Suizo","Samay","Oasis Backpacker",
-                       "One","Ole Backpacker","Garden Backpacker"),
-                   condition = c("hostelworld","hostels","hostelbookers"),
-                   attribute = c("character","safety","location",
-                       "staff","fun","cleanliness"),
-                   stringsAsFactors=FALSE)
+hm1 <- expand.grid(
+    attribute = c("character","safety","location",
+        "staff","fun","cleanliness"),
+    condition = c("hostelworld","hostels","hostelbookers"),
+    object = c("Nuevo Suizo","Samay","Oasis Backpacker",
+        "One","Ole Backpacker","Garden Backpacker"),
+    stringsAsFactors=FALSE)
 
 hostels <- tricontext.data.table(hm1[hostelmatrix,],
                                  objects = unique(hm1[,"object"]),
@@ -92,8 +91,31 @@ he <- extent(hostels,c("Nuevo Suizo",
                        "Samay",
                        "Oasis Backpacker",
                        "Garden Backpacker"))
+hi <- intent(hostels,c("location"))
 hm <- modus(hostels,c("hostelbookers"))
 
+modintent(he)
+# Triadic modus×intent: 
+#        condition
+# 1: hostelbookers
+# 2:   hostelworld
+# 3:       hostels
+#      attribute
+# 1:      safety
+# 2:    location
+# 3:       staff
+# 4:         fun
+# 5: cleanliness
+
+intent(he,hm)
+# Triadic intent: 
+#      attribute
+# 1:      safety
+# 2:       staff
+# 3:         fun
+# 4: cleanliness
+
+concept(he,hi)
 }
 \keyword{data}
 
