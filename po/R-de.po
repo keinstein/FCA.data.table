@@ -1,0 +1,72 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: FCA.data.table 1.0\n"
+"POT-Creation-Date: 2016-09-21 11:00\n"
+"PO-Revision-Date: 2016-09-21 11:00 GMT\n"
+"Last-Translator: Tobias Schlemmer <keinstein@users.sourceforge.net>\n"
+"Language-Team: de <de@li.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "objects must be either NULL, or a list, or a column name"
+msgstr "Gegenstände müssen entweder NULL, eine Liste oder ein Spaltenname sein"
+
+msgid "Some objects are not in the context. They have been stripped."
+msgstr ""
+"Einige Gegenstände sind nicht im Kontext zu finden. Sie wurden entfernt."
+
+msgid "Some attributes are not in the context. They have been stripped."
+msgstr "Einige Merkmale sidnd nicht am Kotext zu finden. Sie wurden entfernt."
+
+msgid "This type of tricontext is currently not supported"
+msgstr "Dieser Typ eines Trikontexts wird momentan nicht unterstützt"
+
+msgid "The following objects have not been found:"
+msgstr "Die folgenden Gegenstände wurden nicht gefunden:"
+
+msgid "The secound argument must be a triadic extent"
+msgstr "Das zweite argument muss ein triadischer Umfang sein"
+
+msgid ""
+"Trying to infer a common intent from a modus and an extent of different "
+"contexts"
+msgstr ""
+"Versuche einen gemeinesamen Inhalt von einem Modus und einem Umfang "
+"unterschiedlicher Kontexte zu erhalten"
+
+msgid "The secound argument must be a triadic intent"
+msgstr "Das zweite Argument muss ein triadischer Inhalt sein"
+
+msgid ""
+"Trying to infer a common extent from a modus and an intent of different "
+"contexts"
+msgstr ""
+"Versuche einen gemeinesamen Umfang von einem Modus und einem Inhalt "
+"unterschiedlicher Kontexte zu erhalten"
+
+msgid ""
+"Trying to infer a common modus from a extent and an intent of different "
+"contexts"
+msgstr ""
+"Versuche einen gemeinesamen Modus von einem Umfang und einem Inhalt "
+"unterschiedlicher Kontexte zu erhalten"
+
+msgid ""
+"The object set must be associated with a triadic context.\n"
+" Use extent(context,objects) for this purpose"
+msgstr ""
+"Die Gegenstandsmenge muss zu einem triadischen Kontext gehören.\n"
+" Benutzen Sie extent(context,objects) für diesen Zweck"
+
+msgid ""
+"The attribute set must be associated with a triadic context.\n"
+" Use intent(context,attributes) for this purpose"
+msgstr ""
+"Die Merkmalsmenge muss zu einem triadischen Kontext gehören.\n"
+" Benutzen Sie intent(context,attributes) für diesen Zweck"
+
+msgid "Object and attribute sets must belong to the same triadic context"
+msgstr ""
+"Gegenstands- und Merkmalsmenge müssen zum selben triadischen Kontext gehören"

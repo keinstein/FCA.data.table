@@ -1,0 +1,50 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: FCA.data.table 1.0\n"
+"POT-Creation-Date: 2016-09-21 10:59\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+msgid "objects must be either NULL, or a list, or a column name"
+msgstr ""
+
+msgid "Some objects are not in the context. They have been stripped."
+msgstr ""
+
+msgid "Some attributes are not in the context. They have been stripped."
+msgstr ""
+
+msgid "This type of tricontext is currently not supported"
+msgstr ""
+
+msgid "The following objects have not been found:"
+msgstr ""
+
+msgid "The secound argument must be a triadic extent"
+msgstr ""
+
+msgid "Trying to infer a common intent from a modus and an extent of different contexts"
+msgstr ""
+
+msgid "The secound argument must be a triadic intent"
+msgstr ""
+
+msgid "Trying to infer a common extent from a modus and an intent of different contexts"
+msgstr ""
+
+msgid "Trying to infer a common modus from a extent and an intent of different contexts"
+msgstr ""
+
+msgid "The object set must be associated with a triadic context.\n Use extent(context,objects) for this purpose"
+msgstr ""
+
+msgid "The attribute set must be associated with a triadic context.\n Use intent(context,attributes) for this purpose"
+msgstr ""
+
+msgid "Object and attribute sets must belong to the same triadic context"
+msgstr ""
