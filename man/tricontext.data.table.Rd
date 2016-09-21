@@ -97,23 +97,18 @@ hm <- modus(hostels,c("hostelbookers"))
 modintent(he)
 # Triadic modus×intent: 
 #        condition
-# 1: hostelbookers
-# 2:   hostelworld
-# 3:       hostels
-#      attribute
-# 1:      safety
-# 2:    location
-# 3:       staff
-# 4:         fun
-# 5: cleanliness
+# 1:   hostelworld
+# 2:       hostels
+# 3: hostelbookers
+#    attribute
+# 1:  location
+# 2:     staff
 
 intent(he,hm)
 # Triadic intent: 
-#      attribute
-# 1:      safety
-# 2:       staff
-# 3:         fun
-# 4: cleanliness
+#    attribute
+# 1:  location
+# 2:     staff
 
 concept(he,hi)
 }

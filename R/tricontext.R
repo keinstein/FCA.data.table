@@ -567,15 +567,53 @@ format.trimodus.data.table <- function(x,...) {
     }
 }
 
+"_get_attr_from_name" <- function(cxt,name) {
+    tmp <- c("objects","attributes","conditions")
+    names(tmp) <- c(attr(cxt,"objectname"),
+                    attr(cxt,"attributename"),
+                    attr(cxt,"conditionname"))
+    tmp[name]
+ }
+
+#' @export
+"_get_all.tricontext.data.table" <- function(cxt,name) {
+    tmp <- data.table(name = attr(cxt,`_get_attr_from_name`(cxt,name)))
+    setnames(tmp,c(name))
+}
+
 #'@export
 "_derive_1D_1D_1D" <- function(cxt, one, two, names) {
     if (!is.data.table(one)) {
         one <- as.data.table(one)
-        setnames(one,c(names[1]))
+        if (!nrow(one) || !ncol(one)) {
+            # we got an empty set
+            return(as.data.table(`_get_all.tricontext.data.table`(cxt,names[3])))
+        } else if (ncol(one) >1) {
+            if (names[1] %in% names(one)) 
+                one <- one[,names[1],with=FALSE]
+            else {
+                one <- one[,1]
+                setnames(one,c(names[1]))
+            }
+        } else setnames(one,c(names[1]))
     }
     if (!is.data.table(two)) {
         two <- as.data.table(two)
-        setnames(two,c(names[2]))
+        if (!nrow(two) || !ncol(two)) {
+            # we got an empty set
+            return(as.data.table(`_get_all.tricontext.data.table`(cxt,names[3])))
+        } else if (ncol(two) >1) {
+            if (names[2] %in% names(two)) 
+                two <- two[,names[2],with=FALSE]
+            else {
+                two <- two[,1]
+                setnames(two,c(names[2]))
+            }
+        } else setnames(two,c(names[2]))
+    }
+    if (!nrow(one) || !nrow(two)) {
+            # we got an empty set
+            return(as.data.table(`_get_all.tricontext.data.table`(cxt,names[3])))
     }
     mergenames <- names[3]
     names(mergenames) <- mergenames
@@ -802,7 +840,7 @@ extent.trimodus.data.table <- function(modus,intent) {
     if (!is.triintent.data.table(intent))
         stop ("The secound argument must be a triadic intent")
     if (!identical(cxt,attr(intent,"context")))
-        stop ("Trying to infer a common intent from a modus and an intent of different contexts")
+        stop ("Trying to infer a common extent from a modus and an intent of different contexts")
     reduced <- `_derive_1D_1D_1D`(cxt,
                                   attr(modus,"conditions"),
                                   attr(intent,"attributes"),
@@ -844,7 +882,7 @@ modus.triextent.data.table <- function(extent,intent) {
     if (!is.triintent.data.table(intent))
         stop ("The secound argument must be a triadic intent")
     if (!identical(cxt,attr(intent,"context")))
-        stop ("Trying to infer a common intent from a extent and an intent of different contexts")
+        stop ("Trying to infer a common modus from a extent and an intent of different contexts")
     reduced <- `_derive_1D_1D_1D`(cxt,
                                   attr(extent,"objects"),
                                   attr(intent,"attributes"),
@@ -975,9 +1013,198 @@ format.triextintent.data.table <- function(x,...) {
           sep="")
 }
 
-#' Create a formal concept
+#' Generic method for creating formal concepts (unchecked version)
+#' @title Unchecked concept generation mathods
+#' 
+#' @section Warning: This functions should be called after checking
+#' all parameters, only.  Otherwise, expect cryptic error
+#' messages. For debugging purpose try to use \code{\link{concept}}
+#' instead.
+#' @seealso concept
+#' @export
+concept_nc <- function (x,...) {
+    UseMethod("concept_nc")
+}
+
+#' @describeIn concept_nc
+#' Create a formal triadic concept from a triadic
+#' extent and a triadic intent
+#' @param cxt triadic formal context
+#' @param one a data.table of elements of one of the three defining sets
+#' @param two a data.table of elements of another of the three defining sets
+#' @param names a vector containing the three names of the three defining sets
+#' The first one corresponds to the parameter \code{one}, the secound one to \code{two}, and the third one to the missing dimension.
+#' @return triadic concept
+#' @seealso \code{\link{concept}}
+#' @export
+concept_nc.tricontext.data.table <- function(cxt,
+                                             one,
+                                             two,
+                                             names) {
+    three <- `_derive_1D_1D_1D`(cxt,
+                                one,
+                                two,
+                                names)
+    one <- `_derive_1D_1D_1D`(cxt,
+                              two,
+                              three,
+                              names[c(2,3,1)])
+    two <- `_derive_1D_1D_1D`(cxt,
+                              three,
+                              one,
+                              names[c(3,1,2)])
+    result <- structure(NA,
+                        context=cxt,
+                        class=c("triconcept.data.table"))
+    setattr(result,`_get_attr_from_name`(cxt,names[1]),one)
+    setattr(result,`_get_attr_from_name`(cxt,names[2]),two)
+    setattr(result,`_get_attr_from_name`(cxt,names[3]),three)
+    return(result)
+}
+
+
+#' Generic method for creating formal concepts
+#' @title Checked concept generation mathods
+#' @example inst/examples/generic_tricontext.R
+#' @seealso \code{\link{concept_nc}} for the unchecked version
+#' @export
 concept <- function (x,...) {
     UseMethod("concept")
+}
+
+#' @describeIn concept
+#' Create a formal triadic concept from a triadic
+#' extent and another set
+#'
+#' The missing dimension will be expanded to the highest degree, then
+#' the first argument, and finally the secound argument. This corresponds to
+#' the behaviour in the literature
+#' 
+#' @param extent starting set of the extent
+#' @param two a starting set either marked as \code{\link{intent}} or as \code{\link{modus}}
+#' @return triadic concept
+#' @export
+concept.triextent.data.table <- function(extent,two) {
+    cxt <- attr(extent,"context")
+    if (!is.tricontext.data.table(cxt))
+        stop ("The object set must be associated with a triadic context.
+ Use extent(context,objects) for this purpose")
+    if (!is.tricontext.data.table(attr(two,"context")))
+        stop ("The attribute set must be associated with a triadic context.
+ Use intent(context,attributes) for this purpose")
+    if (!identical(cxt,attr(two,"context")))
+        stop("Object and attribute sets must belong to the same triadic context")
+    if (is.triintent.data.table(two))
+        return(concept_nc.tricontext.data.table(cxt,
+                                                attr(extent,"objects"),
+                                                attr(two,"attributes"),
+                                                c(attr(cxt,"objectname"),
+                                                  attr(cxt,"attributename"),
+                                                  attr(cxt,"conditionname"))))
+    else return(concept_nc.tricontext.data.table(cxt,
+                                                attr(extent,"objects"),
+                                                attr(two,"conditions"),
+                                                c(attr(cxt,"objectname"),
+                                                  attr(cxt,"conditionname"),
+                                                  attr(cxt,"attributename"))))
+}
+
+#' @describeIn concept
+#' Create a formal triadic concept from a triadic
+#' intent and another set
+#'
+#' The missing dimension will be expanded to the highest degree, then
+#' the first argument, and finally the secound argument. This corresponds to
+#' the behaviour in the literature
+#' 
+#' @param intent starting set of the intent
+#' @param two a starting set either marked as \code{\link{extent}} or as \code{\link{modus}}
+#' @return triadic concept
+#' @export
+concept.triintent.data.table <- function(intent,two) {
+    cxt <- attr(intent,"context")
+    if (!is.tricontext.data.table(cxt))
+        stop ("The object set must be associated with a triadic context.
+ Use intent(context,objects) for this purpose")
+    if (!is.tricontext.data.table(attr(two,"context")))
+        stop ("The attribute set must be associated with a triadic context.
+ Use intent(context,attributes) for this purpose")
+    if (!identical(cxt,attr(two,"context")))
+        stop("Object and attribute sets must belong to the same triadic context")
+    if (is.triextent.data.table(two))
+        return(concept_nc.tricontext.data.table(cxt,
+                                                attr(intent,"attributes"),
+                                                attr(two,"objects"),
+                                                c(attr(cxt,"attributename"),
+                                                  attr(cxt,"objectname"),
+                                                  attr(cxt,"conditionname"))))
+    else return(concept_nc.tricontext.data.table(cxt,
+                                                attr(intent,"attributes"),
+                                                attr(two,"conditions"),
+                                                c(attr(cxt,"attributename"),
+                                                  attr(cxt,"conditionname"),
+                                                  attr(cxt,"objectname"))))
+}
+
+#' @describeIn concept
+#' Create a formal triadic concept from a triadic
+#' modus and another set
+#'
+#' The missing dimension will be expanded to the highest degree, then
+#' the first argument, and finally the secound argument. This corresponds to
+#' the behaviour in the literature
+#' 
+#' @param modus starting set of the extent
+#' @param two a starting set either marked as \code{\link{intent}} or as \code{\link{extent}}
+#' @return triadic concept
+#' @export
+concept.trimodus.data.table <- function(modus,two) {
+    cxt <- attr(modus,"context")
+    if (!is.tricontext.data.table(cxt))
+        stop ("The object set must be associated with a triadic context.
+ Use intent(context,objects) for this purpose")
+    if (!is.tricontext.data.table(attr(two,"context")))
+        stop ("The attribute set must be associated with a triadic context.
+ Use intent(context,attributes) for this purpose")
+    if (!identical(cxt,attr(two,"context")))
+        stop("Object and attribute sets must belong to the same triadic context")
+    if (is.triextent.data.table(two))
+        return(concept_nc.tricontext.data.table(cxt,
+                                                attr(modus,"conditions"),
+                                                attr(two,"objects"),
+                                                c(attr(cxt,"conditionname"),
+                                                  attr(cxt,"objectname"),
+                                                  attr(cxt,"attributename"))))
+    else return(concept_nc.tricontext.data.table(cxt,
+                                                attr(modus,"conditions"),
+                                                attr(two,"attributes"),
+                                                c(attr(cxt,"conditionname"),
+                                                  attr(cxt,"attributename"),
+                                                  attr(cxt,"objectname"))))
+}
+
+
+#' @export
+format.triconcept.data.table <- function (x) {
+    cxt <- attr(x,"context")
+    paste("triadic concept:",
+          "objects:",
+          attr(x,attr(cxt,"objectname")),
+          "attributes",
+          attr(x,attr(cxt,"attributename")),
+          "conditions",
+          attr(x,attr(cxt,"conditionname")),
+          sep="\n")
+}
+#' @export
+print.triconcept.data.table <- function (x) {
+    cxt <- attr(x,"context")
+    cat("triadic concept:\nobjects:\n")
+    print(attr(x,attr(cxt,"objectname")))
+    cat("attributes:\n")
+    print(attr(x,attr(cxt,"attributename")))
+    cat("conditions:\n")
+    print(attr(x,attr(cxt,"conditionname")))
 }
 
 subcontext <- function (x,...) {

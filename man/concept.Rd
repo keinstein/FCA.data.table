@@ -3,6 +3,9 @@
 \name{concept}
 \alias{concept}
 \alias{concept.triconcept.data.table}
+\alias{concept.triextent.data.table}
+\alias{concept.triintent.data.table}
+\alias{concept.trimodus.data.table}
 \title{Create an extent from some object.}
 \usage{
 concept(x, ...)
@@ -10,22 +13,122 @@ concept(x, ...)
 \method{concept}{triconcept.data.table}(concept)
 
 concept(x, ...)
+
+\method{concept}{triextent.data.table}(extent, two)
+
+\method{concept}{triintent.data.table}(intent, two)
+
+\method{concept}{trimodus.data.table}(modus, two)
 }
 \arguments{
 \item{x}{description of the object
 A see extent.tricontext.data.table for information about creating an
 extent from a list of objects.}
+
+\item{extent}{starting set of the extent}
+
+\item{two}{a starting set either marked as \code{\link{intent}} or as \code{\link{modus}}}
+
+\item{intent}{starting set of the intent}
+
+\item{modus}{starting set of the extent}
+
+\item{two}{a starting set either marked as \code{\link{extent}} or as \code{\link{modus}}}
+
+\item{two}{a starting set either marked as \code{\link{intent}} or as \code{\link{extent}}}
 }
 \value{
 a formal triadic extent
+
+triadic concept
+
+triadic concept
+
+triadic concept
 }
 \description{
 Create an extent from some object.
 
-Create a formal concept
+Generic method for creating formal concepts
 }
 \section{Methods (by class)}{
 \itemize{
 \item \code{triconcept.data.table}: return the concept as no conversion is needed
+
+\item \code{triextent.data.table}: Create a formal triadic concept from a triadic
+extent and another set
+
+The missing dimension will be expanded to the highest degree, then
+the first argument, and finally the secound argument. This corresponds to
+the behaviour in the literature
+
+\item \code{triintent.data.table}: Create a formal triadic concept from a triadic
+intent and another set
+
+The missing dimension will be expanded to the highest degree, then
+the first argument, and finally the secound argument. This corresponds to
+the behaviour in the literature
+
+\item \code{trimodus.data.table}: Create a formal triadic concept from a triadic
+modus and another set
+
+The missing dimension will be expanded to the highest degree, then
+the first argument, and finally the secound argument. This corresponds to
+the behaviour in the literature
 }}
+\examples{
+library("FCA.data.table")
+hostelmatrix <- as.logical(c(
+#   hostelworld  hestels      hostelbookers
+#   c y l s f c  c y l s f c  c y l s f c
+    0,0,1,0,0,0, 0,0,1,1,0,0, 0,0,1,1,0,0, # Nuevo Suizo
+    0,1,1,1,0,1, 0,1,1,1,0,1, 1,1,1,1,0,1, # Samay
+    1,1,1,1,0,1, 1,1,1,1,1,1, 0,1,1,1,1,1, # Oasis Backpacker
+    1,1,0,1,0,1, 1,1,1,1,1,1, 1,1,1,1,1,1, # One
+    1,1,0,1,0,1, 1,1,1,1,1,1, 1,1,1,1,1,1, # Ole Backpacker
+    0,0,1,1,0,1, 1,1,1,1,1,1, 1,1,1,1,0,1  # Garden Backpacker
+))
+
+hm1 <- expand.grid(
+    attribute = c("character","safety","location",
+        "staff","fun","cleanliness"),
+    condition = c("hostelworld","hostels","hostelbookers"),
+    object = c("Nuevo Suizo","Samay","Oasis Backpacker",
+        "One","Ole Backpacker","Garden Backpacker"),
+    stringsAsFactors=FALSE)
+
+hostels <- tricontext.data.table(hm1[hostelmatrix,],
+                                 objects = unique(hm1[,"object"]),
+                                 attributes = unique(hm1[,"attribute"]),
+                                 conditions = unique(hm1[,"condition"])
+                                 )
+
+he <- extent(hostels,c("Nuevo Suizo",
+                       "Samay",
+                       "Oasis Backpacker",
+                       "Garden Backpacker"))
+hi <- intent(hostels,c("location"))
+hm <- modus(hostels,c("hostelbookers"))
+
+modintent(he)
+# Triadic modus×intent: 
+#        condition
+# 1:   hostelworld
+# 2:       hostels
+# 3: hostelbookers
+#    attribute
+# 1:  location
+# 2:     staff
+
+intent(he,hm)
+# Triadic intent: 
+#    attribute
+# 1:  location
+# 2:     staff
+
+concept(he,hi)
+}
+\seealso{
+\code{\link{concept_nc}} for the unchecked version
+}
 
